@@ -1,0 +1,120 @@
+.eval-config-summary.ant-card,
+.eval-config-dimension-card.ant-card,
+.eval-config-table-card.ant-card,
+.eval-config-rule-card.ant-card {
+  border: 1px solid #e8edf5;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(31, 56, 88, 0.06);
+}
+
+.eval-config-summary.ant-card .ant-card-body,
+.eval-config-dimension-card.ant-card .ant-card-body,
+.eval-config-table-card.ant-card .ant-card-body,
+.eval-config-rule-card.ant-card .ant-card-body {
+  padding: 20px 22px;
+}
+
+.eval-config-table-card.ant-card .ant-card-head,
+.eval-config-rule-card.ant-card .ant-card-head {
+  min-height: 58px;
+  font-weight: 700;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.eval-config-summary__item {
+  height: 100%;
+  padding: 6px 2px;
+}
+
+.eval-config-summary__label {
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #7b8794;
+}
+
+.eval-config-summary__value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #1677ff;
+}
+
+.eval-config-summary__value--text {
+  font-size: 18px;
+  color: #1f2d3d;
+}
+
+.eval-config-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2d3d;
+}
+
+.eval-config-dimension-card.ant-card {
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.eval-config-dimension-card.ant-card:hover,
+.eval-config-dimension-card.ant-card.is-active {
+  border-color: #b7d1ff;
+  box-shadow: 0 8px 22px rgba(22, 119, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.eval-config-dimension-card.ant-card.is-active {
+  background: linear-gradient(180deg, #fdfefe 0%, #f6faff 100%);
+}
+
+.eval-config-dimension-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.eval-config-dimension-card__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2d3d;
+}
+
+.eval-config-dimension-card__desc {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #667085;
+}
+
+.eval-config-dimension-card__weight {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  color: #1677ff;
+  white-space: nowrap;
+}
+
+.eval-config-dimension-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.eval-config__weight-text {
+  font-weight: 700;
+  color: #1677ff;
+}
+
+.eval-config-rule-card__item {
+  padding: 12px 14px;
+  line-height: 1.7;
+  color: #475467;
+  border: 1px solid #eef2f7;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fbfcfe 0%, #f7fbff 100%);
+}

@@ -1,0 +1,64 @@
+.eval-create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.eval-create-section.ant-card,
+.eval-create-footer.ant-card {
+  border: 1px solid #e8edf5;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(31, 56, 88, 0.06);
+}
+
+.eval-create-section.ant-card .ant-card-body,
+.eval-create-footer.ant-card .ant-card-body {
+  padding: 22px 24px;
+}
+
+.eval-create-section__title {
+  position: relative;
+  margin-bottom: 20px;
+  padding-left: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2d3d;
+}
+
+.eval-create-section__title::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 0;
+  width: 4px;
+  height: 18px;
+  border-radius: 999px;
+  background: #1677ff;
+}
+
+.eval-create-section__body .ant-form-item {
+  margin-bottom: 18px;
+}
+
+.eval-create-section__body .ant-form-item-label > label {
+  color: #344054;
+  font-weight: 600;
+}
+
+.eval-create-section__body .ant-input,
+.eval-create-section__body .ant-input-affix-wrapper,
+.eval-create-section__body .ant-select-selector {
+  min-height: 42px !important;
+  border-radius: 10px !important;
+  border-color: #d9e2ef !important;
+}
+
+.eval-create-section__body .ant-input-textarea textarea {
+  min-height: 120px;
+}
+
+.eval-create-footer.ant-card .ant-card-body {
+  display: flex;
+  justify-content: flex-end;
+}
