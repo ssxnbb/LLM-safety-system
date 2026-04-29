@@ -1,5 +1,5 @@
 ﻿import { Layout, Menu } from 'antd'
-import { Bot, Boxes, Database, Shield } from 'lucide-react'
+import { BarChart3, Bot, Boxes, Database, Shield } from 'lucide-react'
 import { useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
@@ -13,6 +13,7 @@ import './MainLayout.css'
 const { Header, Sider, Content } = Layout
 
 const sectionIcons = {
+  '/evaluation/overview': <BarChart3 size={16} />,
   data: <Database size={16} />,
   model: <Boxes size={16} />,
   agent: <Bot size={16} />,
@@ -23,9 +24,9 @@ function MainLayout() {
   const location = useLocation()
   const currentRoute = findRouteMeta(location.pathname)
   const [manualOpenKeys, setManualOpenKeys] = useState([])
-  const sidebarItems = getSidebarItems().map((section) => ({
-    ...section,
-    icon: sectionIcons[section.key],
+  const sidebarItems = getSidebarItems().map((item) => ({
+    ...item,
+    icon: sectionIcons[item.key],
   }))
   const routeOpenKeys = getOpenMenuKeys(location.pathname)
   const openKeys = Array.from(new Set([...routeOpenKeys, ...manualOpenKeys]))
@@ -36,7 +37,7 @@ function MainLayout() {
         <div className="platform-sider__header">
           <div className="platform-sider__title">评估中心</div>
           <div className="platform-sider__subtitle">
-            {currentRoute ? currentRoute.section.label : '大模型风险评测'}
+            {currentRoute?.section?.label || currentRoute?.route?.title || '总体评估概览'}
           </div>
         </div>
         <Menu
@@ -62,6 +63,7 @@ function MainLayout() {
             <div className="platform-brand__logo">
               <Shield size={18} />
             </div>
+            <div className="platform-brand__title">评估中心</div>
           </div>
           <div className="platform-header__spacer" />
         </Header>

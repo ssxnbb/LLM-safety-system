@@ -1,4 +1,4 @@
-.eval-create-form {
+﻿.eval-create-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -41,14 +41,21 @@
   margin-bottom: 18px;
 }
 
-.eval-create-section__body .ant-form-item-label > label {
+.eval-create-section__body .ant-form-item-label > label,
+.eval-create-section__field-label {
   color: #344054;
   font-weight: 600;
 }
 
+.eval-create-section__field-label {
+  margin-bottom: 8px;
+}
+
 .eval-create-section__body .ant-input,
 .eval-create-section__body .ant-input-affix-wrapper,
-.eval-create-section__body .ant-select-selector {
+.eval-create-section__body .ant-select-selector,
+.eval-create-section__body .ant-input-number,
+.eval-create-config-select .ant-select-selector {
   min-height: 42px !important;
   border-radius: 10px !important;
   border-color: #d9e2ef !important;
@@ -58,7 +65,85 @@
   min-height: 120px;
 }
 
+.eval-create-config-preview {
+  margin-top: 6px;
+  padding: 18px 18px 16px;
+  border: 1px solid #dfe8f5;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fbfdff 0%, #f6faff 100%);
+}
+
+.eval-create-config-preview__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.eval-create-config-preview__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2d3d;
+}
+
+.eval-create-config-preview__subtitle {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #667085;
+}
+
+.eval-create-config-preview__meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.eval-create-config-preview__meta-item {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e8edf5;
+}
+
+.eval-create-config-preview__meta-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #7b8794;
+}
+
+.eval-create-config-preview__meta-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2d3d;
+}
+
+.eval-create-config-preview__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.eval-create-config-empty {
+  margin-top: 8px;
+  padding: 12px 0 4px;
+}
+
 .eval-create-footer.ant-card .ant-card-body {
   display: flex;
   justify-content: flex-end;
+}
+
+@media (max-width: 992px) {
+  .eval-create-config-preview__meta {
+    grid-template-columns: 1fr;
+  }
+
+  .eval-create-config-preview__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

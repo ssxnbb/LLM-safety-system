@@ -1,9 +1,11 @@
-export const topNavItems = [
-  { key: 'insight', label: 'AI应用洞察' },
-  { key: 'fence', label: '大模型围栏' },
-  { key: 'risk', label: '大模型风险评测' },
-  { key: 'system', label: '系统管理' },
-]
+﻿export const topNavItems = [{ key: 'risk', label: '大模型风险评测' }]
+
+export const overallOverviewRoute = {
+  key: 'overall-overview',
+  label: '总体评估概览',
+  path: '/evaluation/overview',
+  title: '总体评估概览',
+}
 
 export const evaluationSections = [
   {
@@ -14,7 +16,7 @@ export const evaluationSections = [
       { key: 'create', label: '新建评估', path: '/evaluation/data/create', title: '新建评估' },
       { key: 'config', label: '评估配置', path: '/evaluation/data/config', title: '评估配置' },
       { key: 'tasks', label: '评估任务', path: '/evaluation/data/tasks', title: '评估任务' },
-      { key: 'report', label: '评估报告', path: '/evaluation/data/report/:id', title: '评估报告', hideInMenu: true },
+      { key: 'report', label: '报告详情', path: '/evaluation/data/report/:id', title: '报告详情', hideInMenu: true },
     ],
   },
   {
@@ -25,7 +27,7 @@ export const evaluationSections = [
       { key: 'create', label: '新建评估', path: '/evaluation/model/create', title: '新建评估' },
       { key: 'config', label: '评估配置', path: '/evaluation/model/config', title: '评估配置' },
       { key: 'tasks', label: '评估任务', path: '/evaluation/model/tasks', title: '评估任务' },
-      { key: 'report', label: '评估报告', path: '/evaluation/model/report/:id', title: '评估报告', hideInMenu: true },
+      { key: 'report', label: '报告详情', path: '/evaluation/model/report/:id', title: '报告详情', hideInMenu: true },
     ],
   },
   {
@@ -36,7 +38,7 @@ export const evaluationSections = [
       { key: 'create', label: '新建评估', path: '/evaluation/agent/create', title: '新建评估' },
       { key: 'config', label: '评估配置', path: '/evaluation/agent/config', title: '评估配置' },
       { key: 'tasks', label: '评估任务', path: '/evaluation/agent/tasks', title: '评估任务' },
-      { key: 'report', label: '评估报告', path: '/evaluation/agent/report/:id', title: '评估报告', hideInMenu: true },
+      { key: 'report', label: '报告详情', path: '/evaluation/agent/report/:id', title: '报告详情', hideInMenu: true },
     ],
   },
 ]
@@ -57,19 +59,32 @@ function routePatternToRegex(path) {
 }
 
 export function getSidebarItems() {
-  return evaluationSections.map((section) => ({
-    key: section.key,
-    label: section.label,
-    children: section.children
-      .filter((item) => !item.hideInMenu)
-      .map((item) => ({
-        key: item.path,
-        label: item.label,
-      })),
-  }))
+  return [
+    {
+      key: overallOverviewRoute.path,
+      label: overallOverviewRoute.label,
+    },
+    ...evaluationSections.map((section) => ({
+      key: section.key,
+      label: section.label,
+      children: section.children
+        .filter((item) => !item.hideInMenu)
+        .map((item) => ({
+          key: item.path,
+          label: item.label,
+        })),
+    })),
+  ]
 }
 
 export function findRouteMeta(pathname) {
+  if (routePatternToRegex(overallOverviewRoute.path).test(pathname)) {
+    return {
+      section: null,
+      route: overallOverviewRoute,
+    }
+  }
+
   for (const section of evaluationSections) {
     for (const route of section.children) {
       if (routePatternToRegex(route.path).test(pathname)) {
@@ -91,6 +106,10 @@ export function getSelectedMenuKey(pathname) {
     return []
   }
 
+  if (!matched.section) {
+    return [matched.route.path]
+  }
+
   if (matched.route.hideInMenu) {
     const fallbackRoute = matched.section.children.find((item) => item.key === 'tasks')
     return fallbackRoute ? [fallbackRoute.path] : []
@@ -101,5 +120,5 @@ export function getSelectedMenuKey(pathname) {
 
 export function getOpenMenuKeys(pathname) {
   const matched = findRouteMeta(pathname)
-  return matched ? [matched.section.key] : []
+  return matched?.section ? [matched.section.key] : []
 }

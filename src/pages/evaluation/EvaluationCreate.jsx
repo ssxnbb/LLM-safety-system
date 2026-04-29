@@ -1,7 +1,29 @@
-import { Breadcrumb, Button, Card, Col, Form, Input, Row, Select, Space, message } from 'antd'
+﻿import { PlusOutlined } from '@ant-design/icons'
+import {
+  Breadcrumb,
+  Button,
+  Card,
+  Col,
+  Empty,
+  Form,
+  Input,
+  Row,
+  Select,
+  Space,
+  message,
+} from 'antd'
+import { useState, useSyncExternalStore } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import PageTitle from '../../components/evaluation/PageTitle.jsx'
-import { getEvaluationSchema } from '../../mock/evaluationSchemas.js'
+import RiskTag from '../../components/evaluation/RiskTag.jsx'
+import {
+  countSelectedDimensions,
+  countSelectedIndicators,
+  getAllEvaluationConfigs,
+  getSelectedDimensionWeightTotal,
+  getSelectedDimensions,
+  subscribeEvaluationConfigs,
+} from '../../mock/evaluationConfigs.js'
 import { getTypeText } from '../../utils/evaluationScore.js'
 import './EvaluationCreate.css'
 
@@ -48,12 +70,6 @@ const pageMetaMap = {
     title: '新建智能体评估',
     subtitle: '配置智能体类型、工具权限和测试任务集，发起智能体部署评估任务。',
   },
-}
-
-const configNameMap = {
-  data: '数据集质量与安全评估体系',
-  model: '模型分级鲁棒性评估体系',
-  agent: '智能体核心能力评估体系',
 }
 
 function getTypeFromPath(pathname) {
@@ -195,30 +211,24 @@ function renderTypeFields(type) {
   )
 }
 
-function getInitialValues(type) {
-  return {
-    configName: configNameMap[type] || getEvaluationSchema(type)?.title || '',
-  }
-}
-
-function getNameFieldLabel(type) {
-  if (type === 'data') {
-    return '评估名称'
-  }
-
-  if (type === 'model') {
-    return '评估名称'
-  }
-
-  return '评估名称'
-}
-
 function EvaluationCreate() {
   const [form] = Form.useForm()
   const navigate = useNavigate()
   const location = useLocation()
   const type = getTypeFromPath(location.pathname)
   const pageMeta = pageMetaMap[type] || pageMetaMap.data
+  const allConfigs = useSyncExternalStore(
+    subscribeEvaluationConfigs,
+    getAllEvaluationConfigs,
+    getAllEvaluationConfigs,
+  )
+  const configs = allConfigs.filter((config) => config.type === type)
+  const [selectedConfigId, setSelectedConfigId] = useState('')
+
+  const resolvedConfigId = configs.some((config) => config.id === selectedConfigId)
+    ? selectedConfigId
+    : configs[0]?.id || ''
+  const selectedConfig = configs.find((item) => item.id === resolvedConfigId) || null
 
   const handleCancel = () => {
     navigate(`/evaluation/${type}/tasks`)
@@ -229,6 +239,11 @@ function EvaluationCreate() {
   }
 
   const handleFinish = () => {
+    if (!selectedConfig) {
+      message.error('请先选择评估配置')
+      return
+    }
+
     message.success('评估任务已创建')
     navigate(`/evaluation/${type}/tasks`)
   }
@@ -246,18 +261,12 @@ function EvaluationCreate() {
 
       <PageTitle title={pageMeta.title} subtitle={pageMeta.subtitle} />
 
-      <Form
-        form={form}
-        layout="vertical"
-        initialValues={getInitialValues(type)}
-        onFinish={handleFinish}
-        className="eval-create-form"
-      >
+      <Form form={form} layout="vertical" onFinish={handleFinish} className="eval-create-form">
         <SectionCard title="评估基本信息">
           <Row gutter={[20, 4]}>
             <Col xs={24} md={12}>
               <Form.Item
-                label={getNameFieldLabel(type)}
+                label="评估名称"
                 name="evaluationName"
                 rules={[{ required: true, message: '请输入评估名称' }]}
               >
@@ -282,12 +291,70 @@ function EvaluationCreate() {
 
         <SectionCard title="评估配置">
           <Row gutter={[20, 4]}>
-            <Col xs={24} md={12}>
-              <Form.Item label="评估配置" name="configName" rules={[{ required: true, message: '请选择评估配置' }]}>
-                <Input disabled />
-              </Form.Item>
+            <Col xs={24} xl={14}>
+              <div className="eval-create-section__field-label">评估配置</div>
+              <Select
+                value={resolvedConfigId || undefined}
+                placeholder="请选择评估配置"
+                options={configs.map((config) => ({
+                  label: config.name,
+                  value: config.id,
+                }))}
+                onChange={(value) => setSelectedConfigId(value)}
+                suffixIcon={<PlusOutlined />}
+                className="eval-create-config-select"
+              />
             </Col>
           </Row>
+
+          {selectedConfig ? (
+            <div className="eval-create-config-preview">
+              <div className="eval-create-config-preview__header">
+                <div>
+                  <div className="eval-create-config-preview__title">{selectedConfig.name}</div>
+                  <div className="eval-create-config-preview__subtitle">
+                    已配置 {countSelectedDimensions(selectedConfig)} 个一级维度，
+                    {countSelectedIndicators(selectedConfig)} 个评估指标。
+                  </div>
+                </div>
+                <RiskTag type={selectedConfig.securityModelEnabled ? 'warning' : 'default'}>
+                  {selectedConfig.securityModelEnabled
+                    ? `安全大模型：${selectedConfig.securityModel}`
+                    : '未接入安全大模型'}
+                </RiskTag>
+              </div>
+
+              <div className="eval-create-config-preview__meta">
+                <div className="eval-create-config-preview__meta-item">
+                  <span className="eval-create-config-preview__meta-label">适用对象</span>
+                  <span className="eval-create-config-preview__meta-value">{selectedConfig.objectName}</span>
+                </div>
+                <div className="eval-create-config-preview__meta-item">
+                  <span className="eval-create-config-preview__meta-label">维度总权重</span>
+                  <span className="eval-create-config-preview__meta-value">
+                    {getSelectedDimensionWeightTotal(selectedConfig)}
+                  </span>
+                </div>
+                <div className="eval-create-config-preview__meta-item">
+                  <span className="eval-create-config-preview__meta-label">创建时间</span>
+                  <span className="eval-create-config-preview__meta-value">{selectedConfig.createdAt}</span>
+                </div>
+              </div>
+
+              <div className="eval-create-config-preview__tags">
+                {getSelectedDimensions(selectedConfig).map((dimension) => (
+                  <RiskTag key={dimension.id} type="processing">
+                    {dimension.name}
+                  </RiskTag>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <Empty
+              className="eval-create-config-empty"
+              description="当前还没有可用配置，请先到评估配置页新建配置。"
+            />
+          )}
         </SectionCard>
 
         <SectionCard title="备注说明">

@@ -101,6 +101,7 @@
 .platform-brand {
   display: flex;
   align-items: center;
+  gap: 12px;
 }
 
 .platform-brand__logo {
@@ -112,6 +113,13 @@
   border-radius: 50%;
   color: #1677ff;
   background: #eaf3ff;
+}
+
+.platform-brand__title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  color: #1f2d3d;
 }
 
 .platform-header__spacer {

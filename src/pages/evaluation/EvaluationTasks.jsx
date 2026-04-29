@@ -1,8 +1,4 @@
-import {
-  DeleteOutlined,
-  PlusOutlined,
-  SearchOutlined,
-} from '@ant-design/icons'
+﻿import { DeleteOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import {
   Breadcrumb,
   Button,
@@ -17,7 +13,7 @@ import {
   Space,
   message,
 } from 'antd'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import PageTitle from '../../components/evaluation/PageTitle.jsx'
 import RiskTag from '../../components/evaluation/RiskTag.jsx'
@@ -27,20 +23,22 @@ import {
   getScoreStatus,
   getStatusColor,
   getStatusText,
-  getTypeText,
 } from '../../utils/evaluationScore.js'
 import './EvaluationTasks.css'
 
 const pageMetaMap = {
   data: {
+    moduleName: '数据集评估',
     title: '数据集评估任务',
     subtitle: '集中查看数据集准入评估任务的执行状态、风险结果与评估报告。',
   },
   model: {
+    moduleName: '模型评估',
     title: '模型评估任务',
     subtitle: '集中查看模型鲁棒性评估任务的进度、得分与最终等级。',
   },
   agent: {
+    moduleName: '智能体评估',
     title: '智能体评估任务',
     subtitle: '集中查看智能体部署评估任务的状态、风险项与报告结果。',
   },
@@ -97,11 +95,7 @@ function getLevelTagType(totalScore) {
 }
 
 function getDatasetLabel(type) {
-  if (type === 'data') {
-    return '数据集'
-  }
-
-  return '测试集'
+  return type === 'data' ? '数据集' : '测试集'
 }
 
 function EvaluationTasks() {
@@ -119,25 +113,30 @@ function EvaluationTasks() {
     agent: [],
   })
 
-  const deletedIds = deletedIdsByType[type] || []
-  const tasks = getTasksByType(type)
-    .filter((task) => !deletedIds.includes(task.id))
-    .map((task) => {
-      const result = calculateEvaluationResult(type, task.scores)
-      const isHighRisk = result.riskItems.length > 0 || result.totalScore < 60
+  const tasks = useMemo(() => {
+    const deletedIds = deletedIdsByType[type] || []
 
-      return {
-        ...task,
-        result,
-        isHighRisk,
-      }
+    return getTasksByType(type)
+      .filter((task) => !deletedIds.includes(task.id))
+      .map((task) => {
+        const result = calculateEvaluationResult(type, task.scores)
+        const isHighRisk = result.riskItems.length > 0 || result.totalScore < 60
+
+        return {
+          ...task,
+          result,
+          isHighRisk,
+        }
+      })
+  }, [deletedIdsByType, type])
+
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) => {
+      const matchKeyword = keyword ? task.name.includes(keyword.trim()) : true
+      const matchStatus = statusFilter === 'all' ? true : task.status === statusFilter
+      return matchKeyword && matchStatus
     })
-
-  const filteredTasks = tasks.filter((task) => {
-    const matchKeyword = keyword ? task.name.includes(keyword.trim()) : true
-    const matchStatus = statusFilter === 'all' ? true : task.status === statusFilter
-    return matchKeyword && matchStatus
-  })
+  }, [keyword, statusFilter, tasks])
 
   const totalCount = tasks.length
   const runningCount = tasks.filter((task) => task.status === 'running').length
@@ -162,7 +161,7 @@ function EvaluationTasks() {
         className="page-breadcrumb"
         items={[
           { title: '首页' },
-          { title: getTypeText(type) },
+          { title: pageMeta.moduleName },
           { title: pageMeta.title },
         ]}
       />
@@ -231,6 +230,10 @@ function EvaluationTasks() {
                   <div className="eval-task-card__meta-row">
                     <span className="eval-task-card__label">评估配置</span>
                     <span className="eval-task-card__value">{task.configName}</span>
+                  </div>
+                  <div className="eval-task-card__meta-row">
+                    <span className="eval-task-card__label">所属单位</span>
+                    <span className="eval-task-card__value">{task.unitName || task.organizationName}</span>
                   </div>
                   <div className="eval-task-card__meta-row">
                     <span className="eval-task-card__label">所属行业</span>
@@ -306,12 +309,6 @@ function EvaluationTasks() {
                     type="link"
                     onClick={() => navigate(`/evaluation/${type}/report/${task.id}`)}
                   >
-                    详情
-                  </Button>
-                  <Button
-                    type="link"
-                    onClick={() => navigate(`/evaluation/${type}/report/${task.id}`)}
-                  >
                     报告
                   </Button>
                   <Popconfirm
@@ -339,3 +336,6 @@ function EvaluationTasks() {
 }
 
 export default EvaluationTasks
+
+
+

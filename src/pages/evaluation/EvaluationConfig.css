@@ -1,17 +1,23 @@
+﻿.eval-config-list-card.ant-card,
 .eval-config-summary.ant-card,
 .eval-config-dimension-card.ant-card,
 .eval-config-table-card.ant-card,
-.eval-config-rule-card.ant-card {
+.eval-config-rule-card.ant-card,
+.eval-config-editor__basic.ant-card,
+.eval-config-editor__dimension-card.ant-card {
   border: 1px solid #e8edf5;
   border-radius: 14px;
   background: #ffffff;
   box-shadow: 0 4px 16px rgba(31, 56, 88, 0.06);
 }
 
+.eval-config-list-card.ant-card .ant-card-body,
 .eval-config-summary.ant-card .ant-card-body,
 .eval-config-dimension-card.ant-card .ant-card-body,
 .eval-config-table-card.ant-card .ant-card-body,
-.eval-config-rule-card.ant-card .ant-card-body {
+.eval-config-rule-card.ant-card .ant-card-body,
+.eval-config-editor__basic.ant-card .ant-card-body,
+.eval-config-editor__dimension-card.ant-card .ant-card-body {
   padding: 20px 22px;
 }
 
@@ -20,6 +26,75 @@
   min-height: 58px;
   font-weight: 700;
   border-bottom: 1px solid #eef2f7;
+}
+
+.eval-config-list-card__title {
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2d3d;
+}
+
+.eval-config-existing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.eval-config-existing-card {
+  padding: 16px 18px;
+  border: 1px solid #e6edf7;
+  border-radius: 14px;
+  background: #ffffff;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.eval-config-existing-card:hover,
+.eval-config-existing-card.is-active {
+  border-color: #b7d1ff;
+  box-shadow: 0 8px 22px rgba(22, 119, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.eval-config-existing-card.is-active {
+  background: linear-gradient(180deg, #fdfefe 0%, #f6faff 100%);
+}
+
+.eval-config-existing-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.eval-config-existing-card__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2d3d;
+}
+
+.eval-config-existing-card__time {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #98a2b3;
+}
+
+.eval-config-existing-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.eval-config-existing-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 12px;
 }
 
 .eval-config-summary__item {
@@ -117,4 +192,178 @@
   border: 1px solid #eef2f7;
   border-radius: 12px;
   background: linear-gradient(180deg, #fbfcfe 0%, #f7fbff 100%);
+}
+
+.eval-config-editor-drawer .ant-drawer-body {
+  padding: 18px 20px 22px;
+  background: #f5f7fb;
+}
+
+.eval-config-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.eval-config-editor__field-label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #344054;
+}
+
+.eval-config-editor__switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid #d9e2ef;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.eval-config-editor__switch-text {
+  color: #475467;
+}
+
+.eval-config-editor__model-select {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.eval-config-editor__model-select .ant-select-selector,
+.eval-config-editor__basic .ant-input {
+  min-height: 42px !important;
+  border-radius: 10px !important;
+  border-color: #d9e2ef !important;
+}
+
+.eval-config-editor__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.eval-config-editor__dimension-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 16px;
+}
+
+.eval-config-editor__dimension-card.ant-card.is-selected {
+  border-color: #b7d1ff;
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+}
+
+.eval-config-editor__dimension-card.ant-card.is-disabled {
+  opacity: 0.76;
+}
+
+.eval-config-editor__dimension-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.eval-config-editor__dimension-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2d3d;
+}
+
+.eval-config-editor__dimension-desc {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #667085;
+}
+
+.eval-config-editor__dimension-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.eval-config-editor__indicator-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.eval-config-editor__indicator-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #eef2f7;
+  border-radius: 12px;
+  background: #fbfcfe;
+}
+
+.eval-config-editor__indicator-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.eval-config-editor__weight-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.eval-config-editor__weight-box .ant-input-number {
+  width: 92px;
+  border-radius: 10px;
+  border-color: #d9e2ef;
+}
+
+.eval-config-editor__weight-box--small .ant-input-number {
+  width: 84px;
+}
+
+.eval-config-editor__weight-unit {
+  font-size: 13px;
+  color: #667085;
+}
+
+.eval-config-editor__footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 992px) {
+  .eval-config-editor__dimension-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .eval-config-editor__dimension-header,
+  .eval-config-editor__indicator-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .eval-config-existing-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.eval-config-editor__weight-box .ant-input-number-out-of-range,
+.eval-config-editor__weight-box .ant-input-number-out-of-range:hover,
+.eval-config-editor__weight-box .ant-input-number-out-of-range.ant-input-number-focused {
+  border-color: #d9e2ef;
+  box-shadow: none;
+}
+
+.eval-config-editor__weight-box .ant-input-number-out-of-range .ant-input-number-input {
+  color: #1f2d3d;
 }

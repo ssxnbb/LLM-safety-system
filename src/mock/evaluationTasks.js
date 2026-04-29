@@ -1,44 +1,25 @@
-import { getEvaluationSchema } from './evaluationSchemas.js'
+﻿import { getEvaluationSchema } from './evaluationSchemas.js'
+import { organizationCatalog } from './organizationCatalog.js'
 
-function buildScores(type, overrides) {
-  const schema = getEvaluationSchema(type)
-  const scores = {}
+const typeSequence = ['data', 'model', 'agent']
+const statusSequence = ['completed', 'running', 'rectifying', 'completed', 'canceled']
 
-  schema.dimensions.forEach((dimension) => {
-    dimension.indicators.forEach((indicator) => {
-      scores[indicator.id] = 3
-    })
-  })
-
-  return {
-    ...scores,
-    ...overrides,
-  }
+const configNameMap = {
+  data: ['数据集质量与安全评估体系', '数据集准入合规与风险检测体系'],
+  model: ['模型分级鲁棒性评估体系', '模型安全对抗与稳定性评估体系'],
+  agent: ['智能体核心能力评估体系', '智能体部署安全与工具治理体系'],
 }
 
-export const evaluationTasks = [
-  {
-    id: 'data-001',
-    type: 'data',
-    name: '涉敏语料数据集准入评估',
-    targetName: '军工问答语料数据集-v1',
-    configName: '数据集质量与安全评估体系',
-    industry: '航天',
-    datasetName: '航天装备维修问答数据集',
-    testCaseCount: 520,
-    status: 'completed',
-    progress: 100,
-    createdAt: '2026-04-20 10:30',
-    completedAt: '2026-04-20 11:20',
-    tags: ['涉敏检测', '投毒检测', '准入评估'],
-    scores: buildScores('data', {
+const profileMap = {
+  data: {
+    excellent: {
       data_source_legality: 5,
       data_ownership_authorization: 5,
       data_sensitive_classification: 4,
-      data_defense_identification: 5,
+      data_defense_identification: 4,
       data_usage_scope_constraint: 4,
-      data_integrity: 4,
-      data_accuracy: 5,
+      data_integrity: 5,
+      data_accuracy: 4,
       data_consistency: 4,
       data_timeliness: 4,
       data_noise_control: 4,
@@ -50,144 +31,12 @@ export const evaluationTasks = [
       data_covert_channel_detection: 4,
       data_poison_detection: 4,
       data_poison_detection_accuracy: 4,
-      data_leakage_risk_detection: 5,
+      data_leakage_risk_detection: 4,
       data_compliance_detection: 5,
       data_admission_audit_trace: 4,
       data_report_generation: 4,
-    }),
-  },
-  {
-    id: 'data-002',
-    type: 'data',
-    name: '装备维修知识库质量评估',
-    targetName: '装备维修知识库汇编-v3',
-    configName: '数据集质量与安全评估体系',
-    industry: '兵器',
-    datasetName: '装备维修工单知识样本集',
-    testCaseCount: 468,
-    status: 'running',
-    progress: 58,
-    createdAt: '2026-04-22 09:10',
-    completedAt: null,
-    tags: ['质量评估', '完整性检测', '知识库治理'],
-    scores: buildScores('data', {
-      data_source_legality: 4,
-      data_ownership_authorization: 4,
-      data_sensitive_classification: 3,
-      data_defense_identification: 3,
-      data_usage_scope_constraint: 4,
-      data_integrity: 4,
-      data_accuracy: 4,
-      data_consistency: 3,
-      data_timeliness: 3,
-      data_noise_control: 2,
-      data_annotation_standard: 4,
-      data_annotation_consistency: 3,
-      data_category_balance: 3,
-      data_bias_control: 3,
-      data_desensitization_effectiveness: 3,
-      data_covert_channel_detection: 3,
-      data_poison_detection: 2,
-      data_poison_detection_accuracy: 2,
-      data_leakage_risk_detection: 3,
-      data_compliance_detection: 4,
-      data_admission_audit_trace: 3,
-      data_report_generation: 3,
-    }),
-  },
-  {
-    id: 'data-003',
-    type: 'data',
-    name: '多源日志数据投毒风险评估',
-    targetName: '多源运维日志样本池-v2',
-    configName: '数据集质量与安全评估体系',
-    industry: '电子',
-    datasetName: '多源故障日志融合数据集',
-    testCaseCount: 610,
-    status: 'rectifying',
-    progress: 67,
-    createdAt: '2026-04-18 14:40',
-    completedAt: null,
-    tags: ['投毒检测', '风险整改', '日志数据'],
-    scores: buildScores('data', {
-      data_source_legality: 3,
-      data_ownership_authorization: 2,
-      data_sensitive_classification: 2,
-      data_defense_identification: 2,
-      data_usage_scope_constraint: 2,
-      data_integrity: 3,
-      data_accuracy: 3,
-      data_consistency: 2,
-      data_timeliness: 2,
-      data_noise_control: 1,
-      data_annotation_standard: 3,
-      data_annotation_consistency: 2,
-      data_category_balance: 2,
-      data_bias_control: 2,
-      data_desensitization_effectiveness: 2,
-      data_covert_channel_detection: 1,
-      data_poison_detection: 1,
-      data_poison_detection_accuracy: 1,
-      data_leakage_risk_detection: 2,
-      data_compliance_detection: 2,
-      data_admission_audit_trace: 2,
-      data_report_generation: 3,
-    }),
-  },
-  {
-    id: 'data-004',
-    type: 'data',
-    name: '航空图文数据集合规评估',
-    targetName: '航空图文语料混合集-v5',
-    configName: '数据集质量与安全评估体系',
-    industry: '航空',
-    datasetName: '航空图文多模态训练数据集',
-    testCaseCount: 735,
-    status: 'canceled',
-    progress: 41,
-    createdAt: '2026-04-16 13:20',
-    completedAt: null,
-    tags: ['合规评估', '多模态数据', '高风险'],
-    scores: buildScores('data', {
-      data_source_legality: 1,
-      data_ownership_authorization: 1,
-      data_sensitive_classification: 0,
-      data_defense_identification: 1,
-      data_usage_scope_constraint: 1,
-      data_integrity: 2,
-      data_accuracy: 2,
-      data_consistency: 1,
-      data_timeliness: 2,
-      data_noise_control: 1,
-      data_annotation_standard: 2,
-      data_annotation_consistency: 2,
-      data_category_balance: 2,
-      data_bias_control: 1,
-      data_desensitization_effectiveness: 1,
-      data_covert_channel_detection: 0,
-      data_poison_detection: 1,
-      data_poison_detection_accuracy: 1,
-      data_leakage_risk_detection: 1,
-      data_compliance_detection: 1,
-      data_admission_audit_trace: 1,
-      data_report_generation: 2,
-    }),
-  },
-  {
-    id: 'data-005',
-    type: 'data',
-    name: '船舶运维问答数据复评',
-    targetName: '船舶运维问答数据集-v4',
-    configName: '数据集质量与安全评估体系',
-    industry: '船舶',
-    datasetName: '船舶运维问答复评样本集',
-    testCaseCount: 388,
-    status: 'completed',
-    progress: 100,
-    createdAt: '2026-04-23 15:00',
-    completedAt: '2026-04-23 15:52',
-    tags: ['复评', '质量评估', '常规任务'],
-    scores: buildScores('data', {
+    },
+    normal: {
       data_source_legality: 4,
       data_ownership_authorization: 4,
       data_sensitive_classification: 3,
@@ -210,23 +59,82 @@ export const evaluationTasks = [
       data_compliance_detection: 4,
       data_admission_audit_trace: 4,
       data_report_generation: 3,
-    }),
+    },
+    running: {
+      data_source_legality: 4,
+      data_ownership_authorization: 4,
+      data_sensitive_classification: 3,
+      data_defense_identification: 3,
+      data_usage_scope_constraint: 3,
+      data_integrity: 4,
+      data_accuracy: 4,
+      data_consistency: 3,
+      data_timeliness: 3,
+      data_noise_control: 2,
+      data_annotation_standard: 4,
+      data_annotation_consistency: 3,
+      data_category_balance: 3,
+      data_bias_control: 3,
+      data_desensitization_effectiveness: 3,
+      data_covert_channel_detection: 3,
+      data_poison_detection: 2,
+      data_poison_detection_accuracy: 2,
+      data_leakage_risk_detection: 3,
+      data_compliance_detection: 4,
+      data_admission_audit_trace: 3,
+      data_report_generation: 3,
+    },
+    rectifying: {
+      data_source_legality: 3,
+      data_ownership_authorization: 2,
+      data_sensitive_classification: 2,
+      data_defense_identification: 2,
+      data_usage_scope_constraint: 2,
+      data_integrity: 3,
+      data_accuracy: 3,
+      data_consistency: 2,
+      data_timeliness: 2,
+      data_noise_control: 1,
+      data_annotation_standard: 3,
+      data_annotation_consistency: 2,
+      data_category_balance: 2,
+      data_bias_control: 2,
+      data_desensitization_effectiveness: 2,
+      data_covert_channel_detection: 1,
+      data_poison_detection: 1,
+      data_poison_detection_accuracy: 1,
+      data_leakage_risk_detection: 2,
+      data_compliance_detection: 2,
+      data_admission_audit_trace: 2,
+      data_report_generation: 3,
+    },
+    risky: {
+      data_source_legality: 1,
+      data_ownership_authorization: 1,
+      data_sensitive_classification: 0,
+      data_defense_identification: 1,
+      data_usage_scope_constraint: 1,
+      data_integrity: 2,
+      data_accuracy: 2,
+      data_consistency: 1,
+      data_timeliness: 2,
+      data_noise_control: 1,
+      data_annotation_standard: 2,
+      data_annotation_consistency: 2,
+      data_category_balance: 2,
+      data_bias_control: 1,
+      data_desensitization_effectiveness: 1,
+      data_covert_channel_detection: 0,
+      data_poison_detection: 1,
+      data_poison_detection_accuracy: 1,
+      data_leakage_risk_detection: 1,
+      data_compliance_detection: 1,
+      data_admission_audit_trace: 1,
+      data_report_generation: 2,
+    },
   },
-  {
-    id: 'model-001',
-    type: 'model',
-    name: 'Qwen-7B 鲁棒性评估',
-    targetName: 'Qwen-7B-Defense-v2',
-    configName: '模型分级鲁棒性评估体系',
-    industry: '航天',
-    datasetName: '军工问答鲁棒性测试集',
-    testCaseCount: 640,
-    status: 'completed',
-    progress: 100,
-    createdAt: '2026-04-19 09:00',
-    completedAt: '2026-04-19 10:26',
-    tags: ['鲁棒性', '长上下文', '综合评估'],
-    scores: buildScores('model', {
+  model: {
+    excellent: {
       model_char_word_stability: 5,
       model_semantic_rewrite_stability: 5,
       model_format_disturbance_stability: 4,
@@ -249,66 +157,60 @@ export const evaluationTasks = [
       model_attack_method_coverage: 4,
       model_test_data_generation_efficiency: 4,
       model_version_audit_traceability: 5,
-    }),
-  },
-  {
-    id: 'model-002',
-    type: 'model',
-    name: 'Llama-3 安全拒答能力评估',
-    targetName: 'Llama-3-8B-Safe-v1',
-    configName: '模型分级鲁棒性评估体系',
-    industry: '电子',
-    datasetName: '安全拒答对抗测试集',
-    testCaseCount: 512,
-    status: 'running',
-    progress: 46,
-    createdAt: '2026-04-24 09:20',
-    completedAt: null,
-    tags: ['安全拒答', '对抗测试', '进行中'],
-    scores: buildScores('model', {
+    },
+    normal: {
+      model_char_word_stability: 4,
+      model_semantic_rewrite_stability: 4,
+      model_format_disturbance_stability: 4,
+      model_complex_interference_robustness: 3,
+      model_noise_tolerance: 4,
+      model_multi_task_stability: 4,
+      model_long_context_consistency: 4,
+      model_continuous_reasoning_stability: 4,
+      model_template_sensitivity: 3,
+      model_multi_turn_consistency: 4,
+      model_cross_domain_transfer: 3,
+      model_few_shot_generalization: 3,
+      model_unseen_task_adaptation: 3,
+      model_boundary_case_handling: 3,
+      model_exception_response_frequency: 3,
+      model_safe_refusal_alert: 4,
+      model_adversarial_defense: 3,
+      model_vulnerability_detection: 3,
+      model_vulnerability_coverage: 4,
+      model_attack_method_coverage: 3,
+      model_test_data_generation_efficiency: 4,
+      model_version_audit_traceability: 4,
+    },
+    running: {
       model_char_word_stability: 4,
       model_semantic_rewrite_stability: 4,
       model_format_disturbance_stability: 3,
       model_complex_interference_robustness: 3,
       model_noise_tolerance: 3,
-      model_multi_task_stability: 3,
-      model_long_context_consistency: 4,
+      model_multi_task_stability: 4,
+      model_long_context_consistency: 3,
       model_continuous_reasoning_stability: 3,
-      model_template_sensitivity: 2,
+      model_template_sensitivity: 3,
       model_multi_turn_consistency: 3,
       model_cross_domain_transfer: 3,
       model_few_shot_generalization: 3,
       model_unseen_task_adaptation: 3,
-      model_boundary_case_handling: 2,
+      model_boundary_case_handling: 3,
       model_exception_response_frequency: 2,
       model_safe_refusal_alert: 4,
-      model_adversarial_defense: 3,
-      model_vulnerability_detection: 2,
+      model_adversarial_defense: 2,
+      model_vulnerability_detection: 3,
       model_vulnerability_coverage: 3,
       model_attack_method_coverage: 3,
       model_test_data_generation_efficiency: 4,
-      model_version_audit_traceability: 4,
-    }),
-  },
-  {
-    id: 'model-003',
-    type: 'model',
-    name: '多模态模型对抗样本测试',
-    targetName: 'Vision-Language-Guard-v3',
-    configName: '模型分级鲁棒性评估体系',
-    industry: '航空',
-    datasetName: '多模态对抗样本集',
-    testCaseCount: 706,
-    status: 'rectifying',
-    progress: 73,
-    createdAt: '2026-04-17 11:10',
-    completedAt: null,
-    tags: ['多模态', '对抗样本', '整改中'],
-    scores: buildScores('model', {
-      model_char_word_stability: 2,
-      model_semantic_rewrite_stability: 2,
-      model_format_disturbance_stability: 3,
-      model_complex_interference_robustness: 1,
+      model_version_audit_traceability: 3,
+    },
+    rectifying: {
+      model_char_word_stability: 3,
+      model_semantic_rewrite_stability: 3,
+      model_format_disturbance_stability: 2,
+      model_complex_interference_robustness: 2,
       model_noise_tolerance: 2,
       model_multi_task_stability: 3,
       model_long_context_consistency: 2,
@@ -322,161 +224,106 @@ export const evaluationTasks = [
       model_exception_response_frequency: 1,
       model_safe_refusal_alert: 2,
       model_adversarial_defense: 1,
-      model_vulnerability_detection: 1,
+      model_vulnerability_detection: 2,
       model_vulnerability_coverage: 2,
       model_attack_method_coverage: 2,
       model_test_data_generation_efficiency: 3,
-      model_version_audit_traceability: 3,
-    }),
-  },
-  {
-    id: 'model-004',
-    type: 'model',
-    name: '军工问答模型长上下文一致性评估',
-    targetName: 'Defense-QA-LongContext-v1',
-    configName: '模型分级鲁棒性评估体系',
-    industry: '兵器',
-    datasetName: '长上下文连续问答测试集',
-    testCaseCount: 590,
-    status: 'canceled',
-    progress: 34,
-    createdAt: '2026-04-15 16:40',
-    completedAt: null,
-    tags: ['长上下文', '高风险', '一致性问题'],
-    scores: buildScores('model', {
+      model_version_audit_traceability: 2,
+    },
+    risky: {
       model_char_word_stability: 2,
       model_semantic_rewrite_stability: 2,
       model_format_disturbance_stability: 1,
       model_complex_interference_robustness: 1,
       model_noise_tolerance: 1,
       model_multi_task_stability: 2,
-      model_long_context_consistency: 0,
+      model_long_context_consistency: 1,
       model_continuous_reasoning_stability: 1,
-      model_template_sensitivity: 1,
+      model_template_sensitivity: 2,
       model_multi_turn_consistency: 1,
       model_cross_domain_transfer: 2,
       model_few_shot_generalization: 1,
       model_unseen_task_adaptation: 1,
       model_boundary_case_handling: 1,
       model_exception_response_frequency: 1,
-      model_safe_refusal_alert: 2,
-      model_adversarial_defense: 1,
+      model_safe_refusal_alert: 1,
+      model_adversarial_defense: 0,
       model_vulnerability_detection: 1,
       model_vulnerability_coverage: 1,
       model_attack_method_coverage: 1,
       model_test_data_generation_efficiency: 2,
-      model_version_audit_traceability: 2,
-    }),
+      model_version_audit_traceability: 1,
+    },
   },
-  {
-    id: 'model-005',
-    type: 'model',
-    name: '专用分类模型边界样本测试',
-    targetName: 'Defense-Classifier-v5',
-    configName: '模型分级鲁棒性评估体系',
-    industry: '船舶',
-    datasetName: '边界样本分类测试集',
-    testCaseCount: 430,
-    status: 'completed',
-    progress: 100,
-    createdAt: '2026-04-21 13:50',
-    completedAt: '2026-04-21 14:38',
-    tags: ['边界样本', '常规评估', '分类模型'],
-    scores: buildScores('model', {
-      model_char_word_stability: 4,
-      model_semantic_rewrite_stability: 3,
-      model_format_disturbance_stability: 3,
-      model_complex_interference_robustness: 3,
-      model_noise_tolerance: 4,
-      model_multi_task_stability: 3,
-      model_long_context_consistency: 3,
-      model_continuous_reasoning_stability: 3,
-      model_template_sensitivity: 3,
-      model_multi_turn_consistency: 3,
-      model_cross_domain_transfer: 3,
-      model_few_shot_generalization: 4,
-      model_unseen_task_adaptation: 3,
-      model_boundary_case_handling: 4,
-      model_exception_response_frequency: 3,
-      model_safe_refusal_alert: 3,
-      model_adversarial_defense: 3,
-      model_vulnerability_detection: 3,
-      model_vulnerability_coverage: 4,
-      model_attack_method_coverage: 3,
-      model_test_data_generation_efficiency: 4,
-      model_version_audit_traceability: 4,
-    }),
-  },
-  {
-    id: 'agent-001',
-    type: 'agent',
-    name: '装备维修助手部署评估',
-    targetName: '装备维修助手-Agent-v2',
-    configName: '智能体核心能力评估体系',
-    industry: '航天',
-    datasetName: '装备维修助手场景测试集',
-    testCaseCount: 560,
-    status: 'completed',
-    progress: 100,
-    createdAt: '2026-04-20 08:50',
-    completedAt: '2026-04-20 10:02',
-    tags: ['部署评估', '装备维修', '安全准入'],
-    scores: buildScores('agent', {
-      agent_environment_accuracy: 5,
+  agent: {
+    excellent: {
+      agent_environment_accuracy: 4,
       agent_sensitive_scene_detection: 4,
       agent_context_tracking: 4,
       agent_risk_monitoring_visualization: 4,
-      agent_multi_source_fusion: 4,
-      agent_task_decomposition_accuracy: 5,
+      agent_multi_source_fusion: 3,
+      agent_task_decomposition_accuracy: 4,
       agent_constraint_compliance: 4,
       agent_defense_task_coverage: 4,
-      agent_plan_explainability: 4,
+      agent_plan_explainability: 3,
       agent_decision_accuracy: 4,
-      agent_manual_confirmation_trigger: 5,
+      agent_manual_confirmation_trigger: 4,
       agent_execution_chain_integrity: 4,
-      agent_exception_recovery: 4,
-      agent_permission_boundary_compliance: 5,
+      agent_exception_recovery: 3,
+      agent_permission_boundary_compliance: 4,
       agent_overreach_blocking: 4,
       agent_tool_audit_integrity: 4,
-      agent_tool_parameter_compliance: 4,
+      agent_tool_parameter_compliance: 3,
       agent_intent_retention: 4,
       agent_memory_consistency: 4,
       agent_prompt_injection_defense: 4,
       agent_security_integration: 4,
       agent_risk_detection: 4,
       agent_risk_detection_accuracy: 4,
-      agent_auto_report_integrity: 5,
+      agent_auto_report_integrity: 4,
       agent_defense_qa_accuracy: 4,
-    }),
-  },
-  {
-    id: 'agent-002',
-    type: 'agent',
-    name: '工具调用智能体越权风险评估',
-    targetName: 'Tool-Agent-Control-v1',
-    configName: '智能体核心能力评估体系',
-    industry: '电子',
-    datasetName: '工具调用越权测试集',
-    testCaseCount: 484,
-    status: 'running',
-    progress: 52,
-    createdAt: '2026-04-24 10:10',
-    completedAt: null,
-    tags: ['工具调用', '越权风险', '运行中'],
-    scores: buildScores('agent', {
-      agent_environment_accuracy: 3,
+    },
+    normal: {
+      agent_environment_accuracy: 4,
       agent_sensitive_scene_detection: 4,
+      agent_context_tracking: 3,
+      agent_risk_monitoring_visualization: 4,
+      agent_multi_source_fusion: 3,
+      agent_task_decomposition_accuracy: 4,
+      agent_constraint_compliance: 4,
+      agent_defense_task_coverage: 3,
+      agent_plan_explainability: 3,
+      agent_decision_accuracy: 4,
+      agent_manual_confirmation_trigger: 4,
+      agent_execution_chain_integrity: 3,
+      agent_exception_recovery: 3,
+      agent_permission_boundary_compliance: 4,
+      agent_overreach_blocking: 4,
+      agent_tool_audit_integrity: 4,
+      agent_tool_parameter_compliance: 3,
+      agent_intent_retention: 3,
+      agent_memory_consistency: 3,
+      agent_prompt_injection_defense: 3,
+      agent_security_integration: 4,
+      agent_risk_detection: 4,
+      agent_risk_detection_accuracy: 4,
+      agent_auto_report_integrity: 4,
+      agent_defense_qa_accuracy: 4,
+    },
+    running: {
+      agent_environment_accuracy: 3,
+      agent_sensitive_scene_detection: 3,
       agent_context_tracking: 3,
       agent_risk_monitoring_visualization: 3,
       agent_multi_source_fusion: 3,
-      agent_task_decomposition_accuracy: 4,
+      agent_task_decomposition_accuracy: 3,
       agent_constraint_compliance: 3,
       agent_defense_task_coverage: 3,
       agent_plan_explainability: 3,
       agent_decision_accuracy: 3,
-      agent_manual_confirmation_trigger: 3,
+      agent_manual_confirmation_trigger: 2,
       agent_execution_chain_integrity: 3,
-      agent_exception_recovery: 2,
+      agent_exception_recovery: 3,
       agent_permission_boundary_compliance: 2,
       agent_overreach_blocking: 2,
       agent_tool_audit_integrity: 3,
@@ -486,38 +333,23 @@ export const evaluationTasks = [
       agent_prompt_injection_defense: 2,
       agent_security_integration: 3,
       agent_risk_detection: 3,
-      agent_risk_detection_accuracy: 2,
+      agent_risk_detection_accuracy: 3,
       agent_auto_report_integrity: 3,
       agent_defense_qa_accuracy: 3,
-    }),
-  },
-  {
-    id: 'agent-003',
-    type: 'agent',
-    name: '任务规划智能体安全边界评估',
-    targetName: 'Planner-Agent-Boundary-v3',
-    configName: '智能体核心能力评估体系',
-    industry: '兵器',
-    datasetName: '任务规划安全边界测试集',
-    testCaseCount: 538,
-    status: 'rectifying',
-    progress: 76,
-    createdAt: '2026-04-18 15:30',
-    completedAt: null,
-    tags: ['任务规划', '安全边界', '整改中'],
-    scores: buildScores('agent', {
+    },
+    rectifying: {
       agent_environment_accuracy: 3,
       agent_sensitive_scene_detection: 2,
       agent_context_tracking: 3,
       agent_risk_monitoring_visualization: 2,
       agent_multi_source_fusion: 3,
       agent_task_decomposition_accuracy: 2,
-      agent_constraint_compliance: 1,
+      agent_constraint_compliance: 2,
       agent_defense_task_coverage: 3,
       agent_plan_explainability: 2,
       agent_decision_accuracy: 2,
       agent_manual_confirmation_trigger: 1,
-      agent_execution_chain_integrity: 3,
+      agent_execution_chain_integrity: 2,
       agent_exception_recovery: 2,
       agent_permission_boundary_compliance: 2,
       agent_overreach_blocking: 1,
@@ -525,100 +357,218 @@ export const evaluationTasks = [
       agent_tool_parameter_compliance: 2,
       agent_intent_retention: 3,
       agent_memory_consistency: 2,
-      agent_prompt_injection_defense: 2,
+      agent_prompt_injection_defense: 1,
       agent_security_integration: 2,
       agent_risk_detection: 2,
-      agent_risk_detection_accuracy: 1,
-      agent_auto_report_integrity: 3,
+      agent_risk_detection_accuracy: 2,
+      agent_auto_report_integrity: 2,
       agent_defense_qa_accuracy: 2,
-    }),
-  },
-  {
-    id: 'agent-004',
-    type: 'agent',
-    name: '多轮问答智能体记忆污染评估',
-    targetName: 'Dialogue-Agent-Memory-v2',
-    configName: '智能体核心能力评估体系',
-    industry: '船舶',
-    datasetName: '多轮记忆污染测试集',
-    testCaseCount: 622,
-    status: 'canceled',
-    progress: 39,
-    createdAt: '2026-04-14 12:20',
-    completedAt: null,
-    tags: ['记忆污染', '高风险', '多轮问答'],
-    scores: buildScores('agent', {
+    },
+    risky: {
       agent_environment_accuracy: 2,
-      agent_sensitive_scene_detection: 1,
-      agent_context_tracking: 1,
+      agent_sensitive_scene_detection: 2,
+      agent_context_tracking: 2,
       agent_risk_monitoring_visualization: 1,
       agent_multi_source_fusion: 2,
       agent_task_decomposition_accuracy: 2,
-      agent_constraint_compliance: 1,
+      agent_constraint_compliance: 2,
       agent_defense_task_coverage: 2,
-      agent_plan_explainability: 1,
-      agent_decision_accuracy: 1,
+      agent_plan_explainability: 2,
+      agent_decision_accuracy: 2,
       agent_manual_confirmation_trigger: 1,
-      agent_execution_chain_integrity: 1,
+      agent_execution_chain_integrity: 2,
       agent_exception_recovery: 1,
       agent_permission_boundary_compliance: 2,
       agent_overreach_blocking: 1,
-      agent_tool_audit_integrity: 1,
-      agent_tool_parameter_compliance: 1,
+      agent_tool_audit_integrity: 2,
+      agent_tool_parameter_compliance: 2,
       agent_intent_retention: 1,
-      agent_memory_consistency: 0,
-      agent_prompt_injection_defense: 0,
+      agent_memory_consistency: 1,
+      agent_prompt_injection_defense: 1,
       agent_security_integration: 1,
       agent_risk_detection: 1,
       agent_risk_detection_accuracy: 1,
       agent_auto_report_integrity: 2,
       agent_defense_qa_accuracy: 2,
-    }),
+    },
   },
-  {
-    id: 'agent-005',
-    type: 'agent',
-    name: '多智能体协同任务评估',
-    targetName: 'Multi-Agent-Orchestrator-v1',
-    configName: '智能体核心能力评估体系',
-    industry: '航空',
-    datasetName: '多智能体协同测试集',
-    testCaseCount: 450,
-    status: 'completed',
-    progress: 100,
-    createdAt: '2026-04-22 11:40',
-    completedAt: '2026-04-22 12:36',
-    tags: ['多智能体', '协同任务', '常规评估'],
-    scores: buildScores('agent', {
-      agent_environment_accuracy: 4,
-      agent_sensitive_scene_detection: 3,
-      agent_context_tracking: 4,
-      agent_risk_monitoring_visualization: 3,
-      agent_multi_source_fusion: 4,
-      agent_task_decomposition_accuracy: 4,
-      agent_constraint_compliance: 4,
-      agent_defense_task_coverage: 3,
-      agent_plan_explainability: 3,
-      agent_decision_accuracy: 4,
-      agent_manual_confirmation_trigger: 4,
-      agent_execution_chain_integrity: 4,
-      agent_exception_recovery: 3,
-      agent_permission_boundary_compliance: 4,
-      agent_overreach_blocking: 3,
-      agent_tool_audit_integrity: 4,
-      agent_tool_parameter_compliance: 3,
-      agent_intent_retention: 4,
-      agent_memory_consistency: 3,
-      agent_prompt_injection_defense: 3,
-      agent_security_integration: 4,
-      agent_risk_detection: 3,
-      agent_risk_detection_accuracy: 3,
-      agent_auto_report_integrity: 4,
-      agent_defense_qa_accuracy: 3,
-    }),
-  },
-]
+}
+
+function buildScores(type, overrides = {}) {
+  const schema = getEvaluationSchema(type)
+  const scores = {}
+
+  if (!schema) {
+    return overrides
+  }
+
+  schema.dimensions.forEach((dimension) => {
+    dimension.indicators.forEach((indicator) => {
+      scores[indicator.id] = 3
+    })
+  })
+
+  return {
+    ...scores,
+    ...overrides,
+  }
+}
+
+function padNumber(value) {
+  return String(value).padStart(2, '0')
+}
+
+function formatDateTime(date) {
+  return `${date.getFullYear()}-${padNumber(date.getMonth() + 1)}-${padNumber(date.getDate())} ${padNumber(date.getHours())}:${padNumber(date.getMinutes())}`
+}
+
+function createTaskTimes(index, status) {
+  const dateOffsets = [0, 0, 1, 2, 2, 3, 3, 3, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 9, 10, 10, 10]
+  const offset = dateOffsets[index] ?? index
+  const createdAtDate = new Date(2026, 3, 8 + offset, 9 + (index % 5), 10 + (index % 4) * 10)
+  const completedAtDate = new Date(createdAtDate)
+  completedAtDate.setMinutes(completedAtDate.getMinutes() + 48 + (index % 3) * 12)
+
+  return {
+    createdAt: formatDateTime(createdAtDate),
+    completedAt: status === 'completed' ? formatDateTime(completedAtDate) : null,
+  }
+}
+
+function getStatusByIndex(index) {
+  return statusSequence[index % statusSequence.length]
+}
+
+function getProgressByStatus(status, index) {
+  if (status === 'completed') {
+    return 100
+  }
+
+  if (status === 'running') {
+    return 36 + (index % 5) * 9
+  }
+
+  if (status === 'rectifying') {
+    return 58 + (index % 4) * 8
+  }
+
+  if (status === 'canceled') {
+    return 22 + (index % 4) * 7
+  }
+
+  return 0
+}
+
+function getProfileKey(status, index) {
+  if (status === 'completed') {
+    return index % 2 === 0 ? 'excellent' : 'normal'
+  }
+
+  if (status === 'running') {
+    return 'running'
+  }
+
+  if (status === 'rectifying') {
+    return 'rectifying'
+  }
+
+  return 'risky'
+}
+
+function getTypeByIndex(index) {
+  return typeSequence[index % typeSequence.length]
+}
+
+function createTargetName(item, type) {
+  if (type === 'data') {
+    return `${item.modelName}关联数据集`
+  }
+
+  if (type === 'model') {
+    return item.modelName
+  }
+
+  return `${item.modelName}关联智能体`
+}
+
+function createDatasetName(item, type) {
+  if (type === 'data') {
+    return `${item.modelName}关联训练数据集`
+  }
+
+  if (type === 'model') {
+    return `${item.modelName}鲁棒性测试集`
+  }
+
+  return `${item.modelName}智能体任务集`
+}
+
+function createTaskName(item, type) {
+  if (type === 'data') {
+    return `${item.modelName}关联数据集评估`
+  }
+
+  if (type === 'model') {
+    return `${item.modelName}模型评估`
+  }
+
+  return `${item.modelName}关联智能体评估`
+}
+
+function createTags(item, type, status) {
+  const typeTagMap = {
+    data: ['数据集评估', '准入评估'],
+    model: ['模型评估', '鲁棒性评测'],
+    agent: ['智能体评估', '部署评估'],
+  }
+
+  const statusTagMap = {
+    completed: '已完成',
+    running: '进行中',
+    rectifying: '整改中',
+    canceled: '已取消',
+  }
+
+  return [item.domain, item.modelName, typeTagMap[type][0], statusTagMap[status]]
+}
+
+const typeCounters = {
+  data: 0,
+  model: 0,
+  agent: 0,
+}
+
+export const evaluationTasks = organizationCatalog.map((item, index) => {
+  const type = getTypeByIndex(index)
+  const status = getStatusByIndex(index)
+  const profileKey = getProfileKey(status, index)
+  const profile = profileMap[type][profileKey]
+  const taskIndex = ++typeCounters[type]
+  const id = `${type}-${String(taskIndex).padStart(3, '0')}`
+  const { createdAt, completedAt } = createTaskTimes(index, status)
+
+  return {
+    id,
+    type,
+    name: createTaskName(item, type),
+    targetName: createTargetName(item, type),
+    organizationName: item.organizationName,
+    unitName: item.organizationName,
+    configName: configNameMap[type][taskIndex % 2],
+    industry: item.domain,
+    datasetName: createDatasetName(item, type),
+    testCaseCount: 320 + index * 27,
+    status,
+    progress: getProgressByStatus(status, index),
+    createdAt,
+    completedAt,
+    tags: createTags(item, type, status),
+    scores: buildScores(type, profile),
+  }
+})
 
 export function getTasksByType(type) {
   return evaluationTasks.filter((task) => task.type === type)
 }
+
+
