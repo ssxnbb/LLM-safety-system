@@ -134,6 +134,30 @@ const profileMap = {
     },
   },
   model: {
+    sTier: {
+      model_char_word_stability: 5,
+      model_semantic_rewrite_stability: 5,
+      model_format_disturbance_stability: 5,
+      model_complex_interference_robustness: 5,
+      model_noise_tolerance: 5,
+      model_multi_task_stability: 4,
+      model_long_context_consistency: 5,
+      model_continuous_reasoning_stability: 5,
+      model_template_sensitivity: 4,
+      model_multi_turn_consistency: 5,
+      model_cross_domain_transfer: 4,
+      model_few_shot_generalization: 4,
+      model_unseen_task_adaptation: 5,
+      model_boundary_case_handling: 4,
+      model_exception_response_frequency: 4,
+      model_safe_refusal_alert: 5,
+      model_adversarial_defense: 5,
+      model_vulnerability_detection: 4,
+      model_vulnerability_coverage: 5,
+      model_attack_method_coverage: 5,
+      model_test_data_generation_efficiency: 4,
+      model_version_audit_traceability: 5,
+    },
     excellent: {
       model_char_word_stability: 5,
       model_semantic_rewrite_stability: 5,
@@ -178,6 +202,30 @@ const profileMap = {
       model_adversarial_defense: 3,
       model_vulnerability_detection: 3,
       model_vulnerability_coverage: 4,
+      model_attack_method_coverage: 3,
+      model_test_data_generation_efficiency: 4,
+      model_version_audit_traceability: 4,
+    },
+    cTier: {
+      model_char_word_stability: 3,
+      model_semantic_rewrite_stability: 3,
+      model_format_disturbance_stability: 3,
+      model_complex_interference_robustness: 3,
+      model_noise_tolerance: 3,
+      model_multi_task_stability: 3,
+      model_long_context_consistency: 3,
+      model_continuous_reasoning_stability: 3,
+      model_template_sensitivity: 4,
+      model_multi_turn_consistency: 3,
+      model_cross_domain_transfer: 3,
+      model_few_shot_generalization: 3,
+      model_unseen_task_adaptation: 3,
+      model_boundary_case_handling: 3,
+      model_exception_response_frequency: 3,
+      model_safe_refusal_alert: 3,
+      model_adversarial_defense: 3,
+      model_vulnerability_detection: 3,
+      model_vulnerability_coverage: 3,
       model_attack_method_coverage: 3,
       model_test_data_generation_efficiency: 4,
       model_version_audit_traceability: 4,
@@ -538,10 +586,7 @@ const typeCounters = {
   agent: 0,
 }
 
-export const evaluationTasks = organizationCatalog.map((item, index) => {
-  const type = getTypeByIndex(index)
-  const status = getStatusByIndex(index)
-  const profileKey = getProfileKey(status, index)
+function createEvaluationTask({ item, index, type, status, profileKey }) {
   const profile = profileMap[type][profileKey]
   const taskIndex = ++typeCounters[type]
   const id = `${type}-${String(taskIndex).padStart(3, '0')}`
@@ -554,7 +599,7 @@ export const evaluationTasks = organizationCatalog.map((item, index) => {
     targetName: createTargetName(item, type),
     organizationName: item.organizationName,
     unitName: item.organizationName,
-    configName: configNameMap[type][taskIndex % 2],
+    configName: configNameMap[type][(taskIndex - 1) % 2],
     industry: item.domain,
     datasetName: createDatasetName(item, type),
     testCaseCount: 320 + index * 27,
@@ -565,7 +610,47 @@ export const evaluationTasks = organizationCatalog.map((item, index) => {
     tags: createTags(item, type, status),
     scores: buildScores(type, profile),
   }
-})
+}
+
+const rotatingTasks = organizationCatalog
+  .map((item, index) => {
+    const type = getTypeByIndex(index)
+
+    if (type === 'model') {
+      return null
+    }
+
+    const status = getStatusByIndex(index)
+    const profileKey = getProfileKey(status, index)
+
+    return createEvaluationTask({
+      item,
+      index,
+      type,
+      status,
+      profileKey,
+    })
+  })
+  .filter(Boolean)
+
+const modelTasks = organizationCatalog.map((item, index) =>
+  createEvaluationTask({
+    item,
+    index,
+    type: 'model',
+    status: 'completed',
+    profileKey:
+      index % 6 === 0
+        ? 'sTier'
+        : index % 5 === 0
+          ? 'cTier'
+          : index % 2 === 0
+            ? 'excellent'
+            : 'normal',
+  }),
+)
+
+export const evaluationTasks = [...rotatingTasks, ...modelTasks]
 
 export function getTasksByType(type) {
   return evaluationTasks.filter((task) => task.type === type)

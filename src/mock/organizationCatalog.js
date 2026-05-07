@@ -85,13 +85,6 @@
   },
   {
     domain: '兵器',
-    organizationName: '渊亭信息科技',
-    modelName: '天机·大模型',
-    capability: '作战推演',
-    parameterScale: '130B',
-  },
-  {
-    domain: '兵器',
     organizationName: '智元研究院',
     modelName: '黄河大模型',
     capability: '目标识别、场景分析',
@@ -110,13 +103,6 @@
     modelName: '观澜大模型',
     capability: '能源控制',
     parameterScale: '20B',
-  },
-  {
-    domain: '电子',
-    organizationName: '华如科技',
-    modelName: 'XSimVerse大模型',
-    capability: '虚拟训练',
-    parameterScale: '650B',
   },
   {
     domain: '核',

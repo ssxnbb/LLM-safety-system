@@ -4,7 +4,7 @@ const STORAGE_KEY = 'llm-governance-evaluation-configs-v1'
 let cachedRawValue = null
 let cachedConfigs = null
 
-export const securityModelOptions = ['Llama Guard', 'ShieldGemma', 'Lakera Guard']
+export const SECURITY_MODEL_NAME = '面向国防科技工业的智能体安全风险检测大模型'
 
 const builtInConfigBlueprints = {
   data: [
@@ -88,8 +88,8 @@ const builtInConfigBlueprints = {
       isDefault: true,
       createdAt: '系统内置',
       updatedAt: '系统内置',
-      securityModelEnabled: false,
-      securityModel: '',
+      securityModelEnabled: true,
+      securityModel: SECURITY_MODEL_NAME,
     },
     {
       id: 'model-default-alt',
@@ -98,7 +98,7 @@ const builtInConfigBlueprints = {
       createdAt: '系统内置',
       updatedAt: '系统内置',
       securityModelEnabled: true,
-      securityModel: 'Llama Guard',
+      securityModel: SECURITY_MODEL_NAME,
       dimensions: [
         {
           id: 'model_local_robustness',
@@ -302,7 +302,10 @@ export function createEvaluationConfigFromSchema(type, overrides = {}) {
     scoreLabel: schema.scoreLabel,
     baseTitle: schema.title,
     securityModelEnabled: overrides.securityModelEnabled ?? false,
-    securityModel: overrides.securityModel || '',
+    securityModel:
+      overrides.securityModelEnabled ?? false
+        ? overrides.securityModel || SECURITY_MODEL_NAME
+        : '',
     isDefault: overrides.isDefault ?? false,
     createdAt,
     updatedAt,
@@ -361,7 +364,23 @@ function writeStorage(configs, emitChange = true) {
 
 function normalizeConfigs(storedConfigs) {
   const sanitizedConfigs = storedConfigs
-    .map((config) => createEvaluationConfigFromSchema(config.type, config))
+    .map((config) => {
+      const blueprint = getBuiltInConfigBlueprints(config.type).find((item) => item.id === config.id)
+
+      if (!blueprint) {
+        return createEvaluationConfigFromSchema(config.type, config)
+      }
+
+      return createEvaluationConfigFromSchema(config.type, {
+        ...config,
+        isDefault: blueprint.isDefault ?? config.isDefault ?? false,
+        securityModelEnabled: blueprint.securityModelEnabled ?? config.securityModelEnabled,
+        securityModel:
+          blueprint.securityModelEnabled ?? false
+            ? blueprint.securityModel || SECURITY_MODEL_NAME
+            : config.securityModel,
+      })
+    })
     .filter(Boolean)
 
   const mergedConfigs = [...sanitizedConfigs]

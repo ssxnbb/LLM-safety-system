@@ -17,7 +17,6 @@ import {
   InputNumber,
   Popconfirm,
   Row,
-  Select,
   Space,
   Switch,
   Table,
@@ -39,7 +38,7 @@ import {
   getSelectedDimensions,
   getSelectedIndicators,
   removeEvaluationConfig,
-  securityModelOptions,
+  SECURITY_MODEL_NAME,
   subscribeEvaluationConfigs,
   upsertEvaluationConfig,
 } from '../../mock/evaluationConfigs.js'
@@ -187,7 +186,7 @@ function validateDraftConfig(draftConfig, configs) {
   }
 
   if (draftConfig.securityModelEnabled && !draftConfig.securityModel) {
-    return '请选择安全大模型'
+    return '请确认是否接入面向国防科技工业的智能体安全风险检测大模型'
   }
 
   return ''
@@ -504,9 +503,13 @@ function EvaluationConfig() {
                   <div className="eval-config-existing-card__meta">
                     <RiskTag type="processing">维度 {countSelectedDimensions(config)} 个</RiskTag>
                     <RiskTag type="success">指标 {countSelectedIndicators(config)} 项</RiskTag>
-                    <RiskTag type={config.securityModelEnabled ? 'warning' : 'default'}>
-                      {config.securityModelEnabled ? config.securityModel : '未接入安全大模型'}
-                    </RiskTag>
+                    <span
+                      className={`eval-config-security-badge${
+                        config.securityModelEnabled ? ' is-enabled' : ''
+                      }`}
+                    >
+                      {config.securityModelEnabled ? `已接入：${config.securityModel}` : '未接入安全大模型'}
+                    </span>
                   </div>
 
                   <div className="eval-config-existing-card__actions">
@@ -607,7 +610,11 @@ function EvaluationConfig() {
               <Col xs={24} sm={12} xl={8}>
                 <div className="eval-config-summary__item">
                   <div className="eval-config-summary__label">安全大模型检测</div>
-                  <div className="eval-config-summary__value eval-config-summary__value--text">
+                  <div
+                    className={`eval-config-summary__value eval-config-summary__value--text${
+                      currentConfig.securityModelEnabled ? ' eval-config-summary__value--highlight' : ''
+                    }`}
+                  >
                     {currentConfig.securityModelEnabled
                       ? `已接入 ${currentConfig.securityModel}`
                       : '未接入安全大模型检测'}
@@ -695,7 +702,7 @@ function EvaluationConfig() {
           <div className="eval-config-editor">
             <Card className="eval-config-editor__basic" bordered={false}>
               <Row gutter={[16, 16]}>
-                <Col xs={24} md={12}>
+                <Col xs={24}>
                   <div className="eval-config-editor__field-label">配置名称</div>
                   <Input
                     value={draftConfig.name}
@@ -708,37 +715,31 @@ function EvaluationConfig() {
                     }
                   />
                 </Col>
-                <Col xs={24} md={12}>
-                  <div className="eval-config-editor__field-label">接入安全大模型检测</div>
-                  <div className="eval-config-editor__switch-row">
-                    <span className="eval-config-editor__switch-text">是否启用安全大模型检测</span>
-                    <Switch
-                      checked={draftConfig.securityModelEnabled}
-                      onChange={(checked) =>
-                        setDraftConfig((current) => ({
-                          ...current,
-                          securityModelEnabled: checked,
-                          securityModel: checked ? current.securityModel : '',
-                        }))
-                      }
-                    />
-                  </div>
-                  {draftConfig.securityModelEnabled ? (
-                    <Select
-                      className="eval-config-editor__model-select"
-                      placeholder="请选择安全大模型"
-                      value={draftConfig.securityModel || undefined}
-                      options={securityModelOptions.map((item) => ({ label: item, value: item }))}
-                      onChange={(value) =>
-                        setDraftConfig((current) => ({
-                          ...current,
-                          securityModel: value,
-                        }))
-                      }
-                    />
-                  ) : null}
-                </Col>
               </Row>
+
+              <div className="eval-config-editor__security-block">
+                <div className="eval-config-editor__field-label">是否接入安全大模型</div>
+                <div className="eval-config-editor__switch-row eval-config-editor__switch-row--prominent">
+                  <span className="eval-config-editor__switch-text">
+                    是否接入面向国防科技工业的智能体安全风险检测大模型
+                  </span>
+                  <Switch
+                    checked={draftConfig.securityModelEnabled}
+                    onChange={(checked) =>
+                      setDraftConfig((current) => ({
+                        ...current,
+                        securityModelEnabled: checked,
+                        securityModel: checked ? SECURITY_MODEL_NAME : '',
+                      }))
+                    }
+                  />
+                </div>
+                {draftConfig.securityModelEnabled ? (
+                  <div className="eval-config-editor__security-hint">
+                    当前已接入：{SECURITY_MODEL_NAME}
+                  </div>
+                ) : null}
+              </div>
 
               <div className="eval-config-editor__summary">
                 <RiskTag type="processing">已选维度 {countSelectedDimensions(draftConfig)} 个</RiskTag>

@@ -10,6 +10,7 @@ import {
   Space,
   message,
 } from 'antd'
+import { useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import DimensionScoreList from '../../components/evaluation/DimensionScoreList.jsx'
 import IndicatorTable from '../../components/evaluation/IndicatorTable.jsx'
@@ -77,6 +78,10 @@ function EvaluationReport() {
   const { id } = useParams()
   const type = getTypeFromPath(location.pathname)
   const task = getTasksByType(type).find((item) => item.id === id)
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' })
+  }, [id, type])
 
   if (!task) {
     return (
@@ -163,6 +168,9 @@ function EvaluationReport() {
                   <Descriptions.Item label="评估对象">{task.targetName}</Descriptions.Item>
                   <Descriptions.Item label="评估类型">{getTypeText(type)}</Descriptions.Item>
                   <Descriptions.Item label="评估配置">{task.configName}</Descriptions.Item>
+                  <Descriptions.Item label="所属单位">
+                    {task.unitName || task.organizationName || '--'}
+                  </Descriptions.Item>
                   <Descriptions.Item label="所属行业">{task.industry}</Descriptions.Item>
                   <Descriptions.Item label="测试用例数">{task.testCaseCount}</Descriptions.Item>
                   <Descriptions.Item label="创建时间">{task.createdAt || '--'}</Descriptions.Item>
