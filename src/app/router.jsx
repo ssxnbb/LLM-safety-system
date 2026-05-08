@@ -1,4 +1,4 @@
-﻿import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
+import { createHashRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { evaluationSections, overallOverviewRoute } from './evaluationConfig.js'
 import MainLayout from '../layouts/MainLayout.jsx'
 import EvaluationConfig from '../pages/evaluation/EvaluationConfig.jsx'
@@ -29,7 +29,7 @@ const evaluationRoutes = evaluationSections.flatMap((section) =>
   })),
 )
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: '/',
     element: <MainLayout />,
